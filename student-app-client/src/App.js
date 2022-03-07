@@ -8,13 +8,13 @@ import {
 } from 'react-router-dom';
 import Home from './homePage/Home';
 import AboutPage from './homePage/AboutPage';
-import StudentList from './articles/StudentList';
-import ArticleInfo from './articles/ArticleInfo';
-import ArticleCreate from './articles/ArticleCreate';
+import StudentList from './students/StudentList';
+import StudentInfo from './students/StudentInfo';
+import StudentCreate from './students/StudentCreate';
 import NotFoundPage from './homePage/NotFoundPage';
 import NavBar from './NavBar';
 import './App.css';
-import ArticleEdit from './articles/ArticleEdit';
+import StudentEdit from './students/StudentEdit';
 
 import "primereact/resources/themes/lara-light-indigo/theme.css";  //theme
 import "primereact/resources/primereact.min.css";                  //core css
@@ -45,11 +45,11 @@ function App( ) {
                 <Route path="/" element={ <Home /> } exact />
                 <Route path="/about" element={ <AboutPage /> } />
                 <Route path="/studentlist" element={ <StudentList /> }  />
-                <Route path="/createstudent" element={ <ArticleCreate />} />;
-                <Route path="/editstudent/:id" element={ <ArticleEdit />} />;
+                <Route path="/createstudent" element={ <StudentCreate />} />;
+                <Route path="/editstudent/:id" element={ <StudentEdit />} />;
                 <Route path="/home" element={ <Home /> } />
                 <Route path="/student/:id" 
-                        element = {<ArticleInfo />}
+                        element = {<StudentInfo />}
                 />
                 <Route path="*" element = {<NotFoundPage /> } />
               </Routes>

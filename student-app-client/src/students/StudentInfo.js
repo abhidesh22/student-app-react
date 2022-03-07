@@ -4,9 +4,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {Button} from 'react-bootstrap';
 import axios from 'axios';
 
-const ArticleInfo = () => {
+const StudentInfo = () => {
     const [currentUser, setCurrentUser] = useState("");
-    const [currentArticle, setCurrentArticle] = useState({title:"", username:"", content:[], name:""});
+    const [currentStudent, setCurrentStudent] = useState({title:"", username:"", content:[], name:""});
     const [isAdmin, setIsAdmin] = useState("");
     const [error, setError] = useState("");
     const isMounted = React.useRef(true);
@@ -17,10 +17,10 @@ const ArticleInfo = () => {
     useEffect(() => {
 
         if (isMounted.current) {
-            fetch(`/api/article/${params.title}`)
+            fetch(`/api/student/${params.title}`)
             .then(results => results.json())
             .then(data => {
-              setCurrentArticle(data[0]);
+              setCurrentStudent(data[0]);
             },
             (error) => {
                 setError(error.response.data.message);
@@ -35,9 +35,9 @@ const ArticleInfo = () => {
             isMounted.current = false;
         };
 
-    },[ currentArticle, params.title ]);
+    },[ currentStudent, params.title ]);
 
-    if (!currentArticle) return <NotFoundPage />
+    if (!currentStudent) return <NotFoundPage />
     const handleDelete = async(name) => {
         try {
             const config = {
@@ -46,11 +46,11 @@ const ArticleInfo = () => {
                 },
               };
             await axios.delete(
-                `/api/article/${name}`,
+                `/api/student/${name}`,
                 config
             );
         } catch (error) {
-            setError("Not able to delete Article at the moment");
+            setError("Not able to delete Student at the moment");
         }
         navigate("/studentlist");        
     }
@@ -58,19 +58,19 @@ const ArticleInfo = () => {
     return (
         <>
         {error ? <h1>{error} </h1> : null}
-        <h1>{currentArticle.title}</h1>
-        <h2>{`Written By ${currentArticle.username}`}</h2>
-        {currentArticle.content.map((paragraph, key) => (
+        <h1>{currentStudent.title}</h1>
+        <h2>{`Written By ${currentStudent.username}`}</h2>
+        {currentStudent.content.map((paragraph, key) => (
             <ul key={key}>{paragraph}</ul>
         ))}
-        {currentArticle.username === currentUser || isAdmin ?
-        <p><Button variant="primary" href={`/editarticle/${currentArticle.title}` }> Edit </Button>
+        {currentStudent.username === currentUser || isAdmin ?
+        <p><Button variant="primary" href={`/editstudent/${currentStudent.title}` }> Edit </Button>
             {"                     "}
-            <Button variant="primary" onClick={() => handleDelete(currentArticle.title)}> Delete </Button>
+            <Button variant="primary" onClick={() => handleDelete(currentStudent.title)}> Delete </Button>
         </p> : null
         }
         </>
     );
 }
 
-export default ArticleInfo;
+export default StudentInfo;

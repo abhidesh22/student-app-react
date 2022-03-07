@@ -1,8 +1,7 @@
-// Define the article CRUD operation routes
+// Define the student CRUD operation routes
 
 import express from "express";
 import {
-//  getUniversitybyId,
   getUniversities,
   CreateUniversity,
   DeleteUniversity,
@@ -14,7 +13,6 @@ const router = express.Router();
 router.route("/").get(getUniversities);
 router
   .route("/:id")
-//  .get(getUniversitybyId)
   .delete(DeleteUniversity)
   .put(UpdateUniversity);
 router.route("/create").post(CreateUniversity);

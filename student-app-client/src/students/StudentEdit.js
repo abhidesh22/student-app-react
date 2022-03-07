@@ -3,7 +3,7 @@ import {Form, Button } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
-const ArticleEdit = () => {
+const StudentEdit = () => {
     const [details, setDetails] = useState({name:"", title: "", content: []});
     const [currentUser, setCurrentUser] = useState("");
     const [error, setError] = useState("");
@@ -13,13 +13,13 @@ const ArticleEdit = () => {
     useEffect(() => {
 
         if (isMounted.current) {
-            fetch(`/api/article/${params.title}`)
+            fetch(`/api/student/${params.title}`)
             .then(results => results.json())
             .then(data => {
               setDetails({name:data[0].name, title: data[0].title, content: data[0].content});
             },
             (error) => {
-                setError("Error in retrieving the article details");
+                setError("Error in retrieving the student details");
             });
             const loggedUser = localStorage.getItem('loggedUser');
             if(loggedUser) {
@@ -34,9 +34,9 @@ const ArticleEdit = () => {
 
     const submitHandler = event => {
         event.preventDefault();
-        updateArticle(details);
+        updateStudent(details);
     }
-    const updateArticle = async (details) => {
+    const updateStudent = async (details) => {
         try {
             // console.log('here now', currentUser, details);
             const config = {
@@ -46,14 +46,14 @@ const ArticleEdit = () => {
               };
 
             await axios.put(
-                `/api/article/${params.title}`,
+                `/api/student/${params.title}`,
                 { title: details.title, content: details.content, username: currentUser, name: details.name },
                 config
             );
 
             // console.log(data);
         } catch (error) {
-            setError("Not able to edit Article at the moment");
+            setError("Not able to edit Student at the moment");
         }
         
         navigate("/studentlist");
@@ -62,26 +62,26 @@ const ArticleEdit = () => {
     <>
     <div>
     <Form onSubmit={submitHandler}>
-        <h2>Edit Article </h2>
+        <h2>Edit Student </h2>
         {error ? <h1> {error} </h1> : null}
         <Form.Group controlId="formBasicText">
-            <Form.Label>Article Name</Form.Label>
+            <Form.Label>Student Name</Form.Label>
             <Form.Control type="text" placeholder="Enter name" onChange={event => setDetails({...details, name: event.target.value})} value={details.name}/>
         </Form.Group>
 
         <Form.Group controlId="formBasicText">
-            <Form.Label>Article Title </Form.Label>
+            <Form.Label>Student Title </Form.Label>
             {/* <Form.Control type="text" placeholder="Enter title" onChange={event => setDetails({...details, title: event.target.value})} value={details.title}/> */}
         </Form.Group>
         <Form.Label><strong>{details.title}</strong></Form.Label>
 
         <Form.Group controlId="formBasicText">
-            <Form.Label>Article Text</Form.Label>
-            <Form.Control as="textarea" rows={15} placeholder="Enter article" onChange={event => setDetails({...details, content: event.target.value})} value={details.content}/>
+            <Form.Label>Student Text</Form.Label>
+            <Form.Control as="textarea" rows={15} placeholder="Enter student" onChange={event => setDetails({...details, content: event.target.value})} value={details.content}/>
         </Form.Group>
         
         <Button variant="primary" type="submit" >
-            Update Article
+            Update Student
         </Button>
 
     </Form>
@@ -90,4 +90,4 @@ const ArticleEdit = () => {
 );
 }
 
-export default ArticleEdit;
+export default StudentEdit;

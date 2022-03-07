@@ -1,4 +1,4 @@
-// Define the article CRUD operation routes
+// Define the student CRUD operation routes
 
 import express from "express";
 import {
