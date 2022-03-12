@@ -2,20 +2,22 @@
 
 import express from "express";
 import {
-  getStudentById,
+  getStudentByRollno,
   getStudents,
   CreateStudent,
   DeleteStudent,
   UpdateStudent,
   getStudentsPerUniversity,
   getStudentsPerSubject
-} from "../controllers/studentControllers.js";
+} from "../controllers/students-controller.js";
+import { notFound } from "../middleware/error-handler.js";
+
 const router = express.Router();
 
 router.route("/").get(getStudents);
 router
-  .route("/:id")
-  .get(getStudentById)
+  .route("/:rollno")
+  .get(getStudentByRollno)
   .delete(DeleteStudent)
   .put(UpdateStudent);
 
@@ -28,5 +30,5 @@ router
   .get(getStudentsPerSubject)
 
 router.route("/create").post(CreateStudent);
-
+router.use(notFound);
 export default router;

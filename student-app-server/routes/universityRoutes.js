@@ -4,18 +4,17 @@ import express from "express";
 import {
   getUniversities,
   CreateUniversity,
-  DeleteUniversity,
-  UpdateUniversity,
-  CreateCourse
-} from "../controllers/universityControllers.js";
+  DeleteUniversity
+} from "../controllers/university-controllers.js";
+import { notFound } from "../middleware/error-handler.js";
+
 const router = express.Router();
 
 router.route("/").get(getUniversities);
 router
-  .route("/:id")
+  .route("/:name")
   .delete(DeleteUniversity)
-  .put(UpdateUniversity);
 router.route("/create").post(CreateUniversity);
-router.route("/createcourse").post(CreateCourse);
+router.use(notFound);
 
 export default router;

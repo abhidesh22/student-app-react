@@ -1,7 +1,7 @@
 // Define the authentication routes
 
 import { Router } from 'express';
-import { register, loginUser } from '../controllers/authController';
+import { register, loginUser } from '../controllers/auth-controller';
 
 const router = Router();
 
