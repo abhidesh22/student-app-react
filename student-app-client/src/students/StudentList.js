@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import {useState, useEffect, useRef } from 'react';
 import { Button} from 'react-bootstrap';
 import axios from 'axios';
@@ -45,14 +44,15 @@ function StudentList () {
             }
         }
     ]);
+    
     const [tableLoaded, setTableLoaded] = useState(false);
     const [showChart, setShowChart] = useState(false);
     const [chartData, setChartData] = useState(false);
     const [selectedUni, setSelectedUni] = useState({});
     const [universities, setUniversities] = useState([{name: "", _id: ""}]);
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(true);
     const isMounted = useRef(true);
-    let navigate = useNavigate();
 
     ChartJS.register(...registerables);
     ChartJS.register(
@@ -68,6 +68,7 @@ function StudentList () {
 
     useEffect(() => {
         isMounted.current = true;
+
         fetch('/api/uni')
         .then(results => results.json())
         .then(data => {
@@ -152,8 +153,10 @@ function StudentList () {
             doc.autoTable(content);
             doc.save('gt_log.pdf');             
         })
-}
-    const handleDelete = async (id) => {
+    }
+
+    const handleDelete = async (student) => {
+        console.log(student);
         try {
             const config = {
                 headers: {
@@ -161,34 +164,31 @@ function StudentList () {
                 },
               };
             await axios.delete(
-                `/api/student/${id}`,
+                `/api/student/${student.rollno}`,
                 config
             );
         } catch (error) {
             setError("Not able to delete Student at the moment");
         }
-        navigate("/");
+        loadStudentData(selectedUni);
     }
 
-    const handleEdit = () => {
-        //navigate('/createstudent',{ state: currentUser})
-    }
-
-    const handleUniSelect = (event) => {
-        setSelectedUni(event.value);
-        console.log(event.value);
-        if(event.value) {
+    const loadStudentData = (university) => {
+        
+        if(university) {
             setTableLoaded(true);
-            fetch(`/api/student/byuni/${event.value._id}`)
+            setLoading(true);
+            fetch(`/api/student/byuni/${university._id}`)
             .then(results => results.json())
             .then(data => {
               setStudents(data);
+              setLoading(false);
             },
             (error) => {
                 setError(error.response.data.message);
             });
 
-            fetch(`/api/student/bysubject/${event.value._id}`)
+            fetch(`/api/student/bysubject/${university._id}`)
             .then(results => results.json())
             .then(data => {
                 console.log(data);
@@ -211,9 +211,17 @@ function StudentList () {
         } else {
             setTableLoaded(false);
         }
+    } 
+    const handleUniSelect = (event) => {
+        setSelectedUni(event.value);
+        loadStudentData(event.value);
+    }
+    const deleteBodyTemplate = (rowData) => {
+        return <Button variant="primary" onClick={() => handleDelete(rowData)} > Delete </Button>;
     }
     return (
     <>
+    {error ? <h2 color='red'> Error fetching the records currently, please try again later </h2> : null}
     <h2>Select University</h2>
     <Dropdown
         value={selectedUni} 
@@ -228,11 +236,15 @@ function StudentList () {
         valueTemplate={selectedUniversityTemplate}
     />
     
-    {!tableLoaded ? 
+    {!tableLoaded || loading ? 
+        loading ? 
+        <div>
+            <h1> Loading Data, Please wait.. </h1> 
+        </div>
+        :
         <div>
             <h1> Select University to Get Student List</h1> 
-        </div>
-
+        </div>        
         : 
         showChart ? 
         <div>
@@ -262,12 +274,21 @@ function StudentList () {
             <Tooltip target=".export-buttons>button" position="bottom" />
             <div>
                 <Button variant="primary" onClick={() => setShowChart(true)} > Switch to Graph Mode </Button>
-                <div className="card">
-                    <DataTable ref={dt} value={students} responsiveLayout="scroll" header={header} dataKey="id">
+                <div className="card" >
+                    <DataTable 
+                        ref={dt} 
+                        value={students} 
+                        responsiveLayout="scroll" 
+                        header={header} 
+                        dataKey="id" 
+                        progressPending={loading} 
+                        pagination
+                        >
                         <Column field="rollno" header="Student ID"></Column>
                         <Column field="name" header="Name"></Column>
                         <Column field="grade" header="Grade"></Column>
                         <Column field="course.name" header="Subject"></Column>
+                        <Column header="Delete?" body={deleteBodyTemplate}></Column>
                     </DataTable>
                 </div>
             </div>

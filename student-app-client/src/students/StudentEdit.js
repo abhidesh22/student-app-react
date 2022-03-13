@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const StudentEdit = () => {
-    const [details, setDetails] = useState({name:"", title: "", content: []});
+    const [details, setDetails] = useState({name:"", grade: 0});
     const [currentUser, setCurrentUser] = useState("");
     const [error, setError] = useState("");
     let navigate = useNavigate();
@@ -13,10 +13,10 @@ const StudentEdit = () => {
     useEffect(() => {
 
         if (isMounted.current) {
-            fetch(`/api/student/${params.title}`)
+            fetch(`/api/student/${params.rollno}`)
             .then(results => results.json())
             .then(data => {
-              setDetails({name:data[0].name, title: data[0].title, content: data[0].content});
+              setDetails({name:data[0].name, grade: data[0].grade});
             },
             (error) => {
                 setError("Error in retrieving the student details");
@@ -30,15 +30,14 @@ const StudentEdit = () => {
             isMounted.current = false;
         };
 
-    },[ details, params.title ]);
+    },[ details, params.rollno ]);
 
     const submitHandler = event => {
         event.preventDefault();
-        updateStudent(details);
+        if(currentUser) updateStudent(details);
     }
     const updateStudent = async (details) => {
         try {
-            // console.log('here now', currentUser, details);
             const config = {
                 headers: {
                   "Content-Type": "application/json"
@@ -46,12 +45,11 @@ const StudentEdit = () => {
               };
 
             await axios.put(
-                `/api/student/${params.title}`,
-                { title: details.title, content: details.content, username: currentUser, name: details.name },
+                `/api/student/${params.rollno}`,
+                { name: details.name, grade: details.grade },
                 config
             );
 
-            // console.log(data);
         } catch (error) {
             setError("Not able to edit Student at the moment");
         }
@@ -69,15 +67,11 @@ const StudentEdit = () => {
             <Form.Control type="text" placeholder="Enter name" onChange={event => setDetails({...details, name: event.target.value})} value={details.name}/>
         </Form.Group>
 
-        <Form.Group controlId="formBasicText">
-            <Form.Label>Student Title </Form.Label>
-            {/* <Form.Control type="text" placeholder="Enter title" onChange={event => setDetails({...details, title: event.target.value})} value={details.title}/> */}
-        </Form.Group>
-        <Form.Label><strong>{details.title}</strong></Form.Label>
+        <Form.Label><strong>{details.grade}</strong></Form.Label>
 
         <Form.Group controlId="formBasicText">
-            <Form.Label>Student Text</Form.Label>
-            <Form.Control as="textarea" rows={15} placeholder="Enter student" onChange={event => setDetails({...details, content: event.target.value})} value={details.content}/>
+            <Form.Label>Student grade</Form.Label>
+            <Form.Control as="text" placeholder="Enter student grade" onChange={event => setDetails({...details, grade: event.target.value})} value={details.grade}/>
         </Form.Group>
         
         <Button variant="primary" type="submit" >

@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Alert } from "react-bootstrap";
-import axios from "axios";
 import {
   BrowserRouter as Router,
   Route,
@@ -9,8 +7,6 @@ import {
 import Home from './homePage/Home';
 import AboutPage from './homePage/AboutPage';
 import StudentList from './students/StudentList';
-import StudentInfo from './students/StudentInfo';
-import StudentCreate from './students/StudentCreate';
 import NotFoundPage from './homePage/NotFoundPage';
 import NavBar from './NavBar';
 import './App.css';
@@ -23,7 +19,6 @@ import "primeicons/primeicons.css";                                //icons
 function App( ) {
 
     const [user, setUser] = useState("");
-    const [error, setError] = useState("");
 
     // @desc    Get the current logged in user from the local storage
     useEffect(() => {
@@ -45,12 +40,8 @@ function App( ) {
                 <Route path="/" element={ <Home /> } exact />
                 <Route path="/about" element={ <AboutPage /> } />
                 <Route path="/studentlist" element={ <StudentList /> }  />
-                <Route path="/createstudent" element={ <StudentCreate />} />;
                 <Route path="/editstudent/:id" element={ <StudentEdit />} />;
                 <Route path="/home" element={ <Home /> } />
-                <Route path="/student/:id" 
-                        element = {<StudentInfo />}
-                />
                 <Route path="*" element = {<NotFoundPage /> } />
               </Routes>
             </div>
